@@ -10,8 +10,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import simplexity.villagerinfo.VillagerInfo;
-import simplexity.villagerinfo.configurations.locale.MessageInsert;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
+import simplexity.villagerinfo.configurations.locale.Message;
 
 /**
  * Called when a player's info output is toggled
@@ -75,7 +74,7 @@ public class PlayerToggleEvent extends Event implements Cancellable {
     public void setDisabled() {
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
         playerPDC.set(namespacedKey, PersistentDataType.BYTE, (byte) 1);
-        sendPlayerFeedback(MessageInsert.DISABLED_MESSAGE_FORMAT.getMessage());
+        sendPlayerFeedback(Message.INSERT_STATE_DISABLED.getMessage());
     }
 
     /**
@@ -87,7 +86,7 @@ public class PlayerToggleEvent extends Event implements Cancellable {
     public void setEnabled() {
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
         playerPDC.set(namespacedKey, PersistentDataType.BYTE, (byte) 0);
-        sendPlayerFeedback(MessageInsert.ENABLED_MESSAGE_FORMAT.getMessage());
+        sendPlayerFeedback(Message.INSERT_STATE_ENABLED.getMessage());
     }
 
     /**
@@ -122,8 +121,8 @@ public class PlayerToggleEvent extends Event implements Cancellable {
      */
 
     public void sendPlayerFeedback(String state) {
-        player.sendMessage(VillagerInfo.getInstance().getMiniMessage().deserialize(ServerMessage.TOGGLE_COMMAND_FEEDBACK.getMessage(),
-                Placeholder.parsed("plugin_prefix", ServerMessage.PLUGIN_PREFIX.getMessage()),
+        player.sendMessage(VillagerInfo.getInstance().getMiniMessage().deserialize(Message.TOGGLE_COMMAND_FEEDBACK.getMessage(),
+                Placeholder.parsed("plugin_prefix", Message.INSERT_PLUGIN_PREFIX.getMessage()),
                 Placeholder.parsed("value", toggleType),
                 Placeholder.parsed("state", state)));
     }

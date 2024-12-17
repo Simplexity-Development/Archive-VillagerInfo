@@ -6,9 +6,14 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import simplexity.villagerinfo.VillagerInfo;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
+import simplexity.villagerinfo.configurations.locale.Message;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class VillConfig {
@@ -27,7 +32,7 @@ public class VillConfig {
     private float configuredSoundVolume;
     private float configuredSoundPitch;
     private final HashMap<Material, Color> poiBlockHighlightColorsMap = new HashMap<>();
-    String error = ServerMessage.CONFIGURATION_ERROR_PREFIX.getMessage();
+    String error = Message.CONFIG_INVALID_PREFIX.getMessage();
 
     private final Logger logger = VillagerInfo.getInstance().getVillagerInfoLogger();
 
@@ -45,7 +50,7 @@ public class VillConfig {
         try {
             configuredSound = Sound.valueOf(config.getString("sound", "BLOCK_AMETHYST_BLOCK_BREAK").toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException | NullPointerException e) {
-            logger.warning(error + configuredSound + ServerMessage.CONFIGURED_SOUND_ERROR.getMessage());
+            logger.warning(error + configuredSound + Message.CONFIG_INVALID_SOUND.getMessage());
             configuredSound = Sound.BLOCK_AMETHYST_BLOCK_BREAK;
         }
     }
@@ -55,7 +60,7 @@ public class VillConfig {
         if (0 < config.getDouble("sound-pitch") && config.getDouble("sound-pitch") < 2) {
             configuredSoundPitch = (float) config.getDouble("sound-pitch");
         } else {
-            logger.warning(error + ServerMessage.CONFIGURED_PITCH_ERROR.getMessage());
+            logger.warning(error + Message.CONFIG_INVALID_PITCH.getMessage());
             configuredSoundPitch = 1.5F;
         }
     }
@@ -65,7 +70,7 @@ public class VillConfig {
         if (0 < config.getDouble("sound-volume") && config.getDouble("sound-volume") < 2) {
             configuredSoundVolume = (float) config.getDouble("sound-volume");
         } else {
-            logger.warning(error + ServerMessage.CONFIGURED_VOLUME_ERROR.getMessage());
+            logger.warning(error + Message.CONFIG_INVALID_VOLUME.getMessage());
             configuredSoundVolume = 0.5F;
         }
     }
@@ -73,7 +78,7 @@ public class VillConfig {
     public void reloadHighlightTime(FileConfiguration config) {
         configuredHighlightTime = 0;
         if (config.getInt("highlight-time", 10) <= 0) {
-            logger.warning(error + ServerMessage.CONFIGURED_HIGHLIGHT_TIME_ERROR.getMessage());
+            logger.warning(error + Message.CONFIG_INVALID_HIGHLIGHT_TIME.getMessage());
             configuredHighlightTime = 10;
         } else {
             configuredHighlightTime = config.getInt("highlight-time");
@@ -83,7 +88,7 @@ public class VillConfig {
     public void reloadToggles(FileConfiguration config) {
         ConfigurationSection toggleSection = config.getConfigurationSection("toggles");
         if (toggleSection == null) {
-            logger.warning(error + ServerMessage.NO_CONFIG_TOGGLES_FOUND.getMessage() + ServerMessage.ERROR_CHECK_FOR_TABS.getMessage());
+            logger.warning(error + Message.CONFIG_INVALID_MISSING_TOGGLES.getMessage() + Message.CONFIG_INVALID_CHECK_FOR_TABS.getMessage());
             return;
         }
         Set<String> keys = toggleSection.getKeys(false);
@@ -92,21 +97,21 @@ public class VillConfig {
                 ConfigToggle toggle = ConfigToggle.valueOf(key);
                 toggle.setEnabled(toggleSection.getBoolean(key));
             } catch (IllegalArgumentException e) {
-                logger.warning(ServerMessage.LOGGER_INVALID_TOGGLE_KEY.getMessage() + key);
+                logger.warning(Message.ERROR_LOGGER_INVALID_LOCALE_KEY.getMessage() + key);
             }
         }
         ConfigToggle.OUTPUT_ENABLED.setEnabled(config.getBoolean("output-enabled", true));
         ConfigToggle.PLAY_SOUND_ON_INFO_DISPLAY.setEnabled(config.getBoolean("play-sound-on-output", true));
         ConfigToggle.HIGHLIGHT_VILLAGER_WORKSTATION_ON_OUTPUT.setEnabled(config.getBoolean("highlight-workstation-on-output", true));
         if (!(ConfigToggle.OUTPUT_ENABLED.isEnabled() || ConfigToggle.HIGHLIGHT_VILLAGER_WORKSTATION_ON_OUTPUT.isEnabled() || ConfigToggle.PLAY_SOUND_ON_INFO_DISPLAY.isEnabled())) {
-            logger.warning(error + ServerMessage.ERROR_NO_FUNCTIONALITY_ENABLED.getMessage());
+            logger.warning(error + Message.CONFIG_INVALID_NO_FUNCTIONALITY_ENABLED.getMessage());
         }
     }
 
     public void reloadColors(FileConfiguration config) {
         ConfigurationSection colorSection = config.getConfigurationSection("workstation-highlight-color");
         if (colorSection == null) {
-            logger.warning(error + ServerMessage.NO_COLOR_SECTION_FOUND.getMessage() + ServerMessage.ERROR_CHECK_FOR_TABS.getMessage());
+            logger.warning(error + Message.CONFIG_INVALID_MISSING_COLOR_SECTION.getMessage() + Message.CONFIG_INVALID_CHECK_FOR_TABS.getMessage());
             return;
         }
         poiBlockHighlightColorsMap.clear();
@@ -115,12 +120,12 @@ public class VillConfig {
         for (String key : colorKeys) {
             blockMaterial = Material.getMaterial(key);
             if (blockMaterial == null) {
-                logger.warning(error + key + ServerMessage.ERROR_NOT_A_MATERIAL.getMessage());
+                logger.warning(error + key + Message.CONFIG_INVALID_MATERIAL.getMessage());
                 continue;
             }
             List<Integer> rgbList = colorSection.getIntegerList(key);
             if (rgbList.size() < 3) {
-                logger.warning(error + ServerMessage.ERROR_COLOR_DECLARED_INCORRECTLY.getMessage() + rgbList);
+                logger.warning(error + Message.CONFIG_INVALID_COLOR_DECLARED_INCORRECTLY.getMessage() + rgbList);
                 continue;
             }
             Color color = Color.fromRGB(rgbList.get(0), rgbList.get(1), rgbList.get(2));

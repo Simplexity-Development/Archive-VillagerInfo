@@ -5,8 +5,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import simplexity.villagerinfo.VillagerInfo;
-import simplexity.villagerinfo.configurations.locale.LocaleConfig;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
+import simplexity.villagerinfo.configurations.locale.LocaleHandler;
+import simplexity.villagerinfo.configurations.locale.Message;
 import simplexity.villagerinfo.util.Resolvers;
 
 public class VillReloadCommand implements CommandExecutor {
@@ -14,8 +14,8 @@ public class VillReloadCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         VillagerInfo.getInstance().reloadConfig();
         VillagerInfo.getInstance().reloadVillInfoConfigs();
-        LocaleConfig.getInstance().reloadLocale();
-        sender.sendMessage(Resolvers.getInstance().prefixResolver(ServerMessage.CONFIG_AND_LOCALE_RELOADED.getMessage()));
+        LocaleHandler.getInstance().reloadLocale();
+        sender.sendMessage(Resolvers.getInstance().prefixResolver(Message.MESSAGE_CONFIG_RELOADED.getMessage()));
         return true;
     }
 }

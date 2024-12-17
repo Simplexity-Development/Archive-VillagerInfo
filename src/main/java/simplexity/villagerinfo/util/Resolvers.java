@@ -6,8 +6,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Location;
 import simplexity.villagerinfo.VillagerInfo;
-import simplexity.villagerinfo.configurations.locale.MessageInsert;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
+import simplexity.villagerinfo.configurations.locale.Message;
 
 public class Resolvers {
     MiniMessage miniMessage = VillagerInfo.getInstance().getMiniMessage();
@@ -22,20 +21,20 @@ public class Resolvers {
     }
 
     public Component prefixResolver(String message) {
-        return miniMessage.deserialize(message, Placeholder.parsed("plugin_prefix", ServerMessage.PLUGIN_PREFIX.getMessage()));
+        return miniMessage.deserialize(message, Placeholder.parsed("plugin_prefix", Message.INSERT_PLUGIN_PREFIX.getMessage()));
     }
 
     public TagResolver locationBuilder(Location location) {
         Component locationComponent;
         if (location == null) {
-            locationComponent = miniMessage.deserialize(MessageInsert.NONE_MESSAGE_FORMAT.getMessage());
+            locationComponent = miniMessage.deserialize(Message.INSERT_NOTHING_NONE.getMessage());
         } else {
             String x = String.valueOf(location.getBlockX());
             String y = String.valueOf(location.getBlockY());
             String z = String.valueOf(location.getBlockZ());
-            Component compX = miniMessage.deserialize(MessageInsert.LOCATION_X_FORMAT.getMessage(), Placeholder.parsed("value", x));
-            Component compY = miniMessage.deserialize(MessageInsert.LOCATION_Y_FORMAT.getMessage(), Placeholder.parsed("value", y));
-            Component compZ = miniMessage.deserialize(MessageInsert.LOCATION_Z_FORMAT.getMessage(), Placeholder.parsed("value", z));
+            Component compX = miniMessage.deserialize(Message.INSERT_LOCATION_X.getMessage(), Placeholder.parsed("value", x));
+            Component compY = miniMessage.deserialize(Message.LOCATION_Y_FORMAT.getMessage(), Placeholder.parsed("value", y));
+            Component compZ = miniMessage.deserialize(Message.INSERT_LOCATION_Z.getMessage(), Placeholder.parsed("value", z));
             locationComponent = compX.append(compY).append(compZ);
         }
         return TagResolver.resolver(Placeholder.component("location", locationComponent));
@@ -49,22 +48,22 @@ public class Resolvers {
         boolean isPos = Math.abs(devNum) == devNum;
         for (int i = minVal; i <= maxVal; i++) {
             if (i == 0) {
-                reputationComponent = reputationComponent.append(miniMessage.deserialize(MessageInsert.REPUTATION_TOTAL_FORMAT.getMessage(), Placeholder.parsed("value", String.valueOf(repNum))));
+                reputationComponent = reputationComponent.append(miniMessage.deserialize(Message.INSERT_REPUTATION_NUMERICAL_VALUE.getMessage(), Placeholder.parsed("value", String.valueOf(repNum))));
                 continue;
             }
             if (Math.abs(i) != i) {
                 if (!isPos && i < 0 && i >= devNum) {
-                    reputationComponent = reputationComponent.append(miniMessage.deserialize(MessageInsert.NEGATIVE_REPUTATION_BAR_FORMAT.getMessage()));
+                    reputationComponent = reputationComponent.append(miniMessage.deserialize(Message.INSERT_REPUTATION_NEGATIVE.getMessage()));
                     continue;
                 }
-                reputationComponent = reputationComponent.append(miniMessage.deserialize(MessageInsert.NEUTRAL_REPUTATION_BAR_FORMAT.getMessage()));
+                reputationComponent = reputationComponent.append(miniMessage.deserialize(Message.INSERT_REPUTATION_NEUTRAL.getMessage()));
             }
             if (Math.abs(i) == i) {
                 if (isPos && i > 0 && i <= devNum) {
-                    reputationComponent = reputationComponent.append(miniMessage.deserialize(MessageInsert.POSITIVE_REPUTATION_BAR_FORMAT.getMessage()));
+                    reputationComponent = reputationComponent.append(miniMessage.deserialize(Message.INSERT_REPUTATION_POSITIVE.getMessage()));
                     continue;
                 }
-                reputationComponent = reputationComponent.append(miniMessage.deserialize(MessageInsert.NEUTRAL_REPUTATION_BAR_FORMAT.getMessage()));
+                reputationComponent = reputationComponent.append(miniMessage.deserialize(Message.INSERT_REPUTATION_NEUTRAL.getMessage()));
             }
         }
         return TagResolver.resolver(Placeholder.component("reputation_bar", reputationComponent));
@@ -74,7 +73,7 @@ public class Resolvers {
     public TagResolver timeFormatter(Long timeDifferenceInSeconds) {
         Component finalTimeComponent;
         if (timeDifferenceInSeconds == null) {
-            finalTimeComponent = miniMessage.deserialize(MessageInsert.NEVER_MESSAGE_FORMAT.getMessage());
+            finalTimeComponent = miniMessage.deserialize(Message.INSERT_NOTHING_NEVER.getMessage());
         } else {
             long s = timeDifferenceInSeconds % 60;
             long m = (timeDifferenceInSeconds / 60) % 60;
@@ -84,22 +83,22 @@ public class Resolvers {
             if (h > 0) {
                 componentEmpty = false;
                 String hours = String.valueOf(h);
-                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(MessageInsert.HOUR_MESSAGE_FORMAT.getMessage(), Placeholder.parsed("value", hours)));
+                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(Message.INSERT_TIME_HOUR.getMessage(), Placeholder.parsed("value", hours)));
             }
             if (m > 0) {
                 componentEmpty = false;
                 String minutes = String.valueOf(m);
-                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(MessageInsert.MINUTE_MESSAGE_FORMAT.getMessage(), Placeholder.parsed("value", minutes)));
+                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(Message.INSERT_TIME_MINUTE.getMessage(), Placeholder.parsed("value", minutes)));
             }
             if (s > 0) {
                 componentEmpty = false;
                 String seconds = String.valueOf(s);
-                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(MessageInsert.SECOND_MESSAGE_FORMAT.getMessage(), Placeholder.parsed("value", seconds)));
+                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(Message.INSERT_TIME_SECOND.getMessage(), Placeholder.parsed("value", seconds)));
             }
             if (componentEmpty) {
-                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(MessageInsert.JUST_NOW_FORMAT.getMessage()));
+                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(Message.INSERT_TIME_JUST_NOW.getMessage()));
             } else {
-                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(MessageInsert.AGO_MESSAGE_FORMAT.getMessage()));
+                finalTimeComponent = finalTimeComponent.append(miniMessage.deserialize(Message.INSERT_TIME_AGO.getMessage()));
             }
         }
         return TagResolver.resolver(Placeholder.component("time", finalTimeComponent));

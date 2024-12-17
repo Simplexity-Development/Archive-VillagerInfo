@@ -20,9 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import simplexity.villagerinfo.VillagerInfo;
 import simplexity.villagerinfo.configurations.functionality.ConfigToggle;
-import simplexity.villagerinfo.configurations.locale.MessageInsert;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
-import simplexity.villagerinfo.configurations.locale.VillagerMessage;
+import simplexity.villagerinfo.configurations.locale.Message;
 import simplexity.villagerinfo.util.PDCTag;
 import simplexity.villagerinfo.util.Resolvers;
 
@@ -106,11 +104,11 @@ public class VillagerOutputEvent extends Event implements Cancellable {
         outputHasInfo = true;
         String status;
         if (getLobotomized()) {
-            status = MessageInsert.TRUE_MESSAGE_FORMAT.getMessage();
+            status = Message.INSERT_BOOLEAN_TRUE.getMessage();
         } else {
-            status = MessageInsert.FALSE_MESSAGE_FORMAT.getMessage();
+            status = Message.INSERT_BOOLEAN_FALSE.getMessage();
         }
-        return miniMessage.deserialize(VillagerMessage.PURPUR_LOBOTOMIZED.getMessage(), Placeholder.parsed("state", status));
+        return miniMessage.deserialize(Message.READOUT_PURPUR_LOBOTOMIZED.getMessage(), Placeholder.parsed("state", status));
     }
 
     /**
@@ -139,7 +137,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
         outputHasInfo = true;
         villHasProfession = false;
         Long ageInSeconds = getChildVillagerAge() / 20;
-        return miniMessage.deserialize(VillagerMessage.BABY_VILLAGER_AGE.getMessage(), Resolvers.getInstance().timeFormatter(ageInSeconds));
+        return miniMessage.deserialize(Message.READOUT_BABY_AGE.getMessage(), Resolvers.getInstance().timeFormatter(ageInSeconds));
     }
 
     /**
@@ -165,7 +163,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
         if (!ConfigToggle.DISPLAY_LAST_WORK_TIME.isEnabled() || !villHasProfession) return null;
         outputHasInfo = true;
         Long lastWorkedGameTimeDifference = (getCurrentGameTime() - getVillagerLastWorkedGameTime()) / 20;
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_LAST_WORKED.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_LAST_WORKED.getMessage(),
                 Resolvers.getInstance().timeFormatter(lastWorkedGameTimeDifference));
     }
 
@@ -192,7 +190,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
         if (!ConfigToggle.DISPLAY_LAST_SLEEP_TIME.isEnabled()) return null;
         outputHasInfo = true;
         Long lastWorkedGameTimeDifference = (getCurrentGameTime() - getVillagerLastSleptGameTime()) / 20;
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_LAST_SLEPT.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_LAST_SLEPT.getMessage(),
                 Resolvers.getInstance().timeFormatter(lastWorkedGameTimeDifference));
     }
 
@@ -227,7 +225,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
         outputHasInfo = true;
         Double currentHealth = getVillagerCurrentHealth();
         Double maxHealth = getVillagerMaxHealth();
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_HEALTH.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_HEALTH.getMessage(),
                 Placeholder.parsed("value", currentHealth.toString()),
                 Placeholder.parsed("value2", maxHealth.toString()));
     }
@@ -252,7 +250,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
     public Component getVillagerRestocksTodayMessageComponent() {
         if (!ConfigToggle.DISPLAY_RESTOCKS_TODAY.isEnabled() || !villHasProfession) return null;
         outputHasInfo = true;
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_RESTOCKS_TODAY.getMessage(), Placeholder.parsed("value", getVillagerRestocksToday().toString()));
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_RESTOCKS_TODAY.getMessage(), Placeholder.parsed("value", getVillagerRestocksToday().toString()));
     }
 
     /**
@@ -283,9 +281,9 @@ public class VillagerOutputEvent extends Event implements Cancellable {
     public Component getPlayerReputationMessageComponent() {
         if (!ConfigToggle.DISPLAY_PLAYER_REPUTATION.isEnabled()) return null;
         String reputationValue = String.valueOf(getPlayerReputation());
-        Component reputationTotalComponent = miniMessage.deserialize(MessageInsert.REPUTATION_TOTAL_FORMAT.getMessage(),
+        Component reputationTotalComponent = miniMessage.deserialize(Message.INSERT_REPUTATION_NUMERICAL_VALUE.getMessage(),
                 Placeholder.parsed("value", reputationValue));
-        return miniMessage.deserialize(VillagerMessage.PLAYER_REPUTATION_MESSAGE.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_PLAYER_REPUTATION.getMessage(),
                 Resolvers.getInstance().playerReputationResolver(getPlayerReputation()),
                 Placeholder.component("reputation_number", reputationTotalComponent));
     }
@@ -313,7 +311,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
         Villager.Profession profession = getVillagerProfession();
         if (profession.equals(Villager.Profession.NONE)) villHasProfession = false;
         String professionString = profession.name().toLowerCase();
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_PROFESSION.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_PROFESSION.getMessage(),
                 Placeholder.parsed("value", professionString));
     }
 
@@ -342,7 +340,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
         int itemCount = itemStack.getAmount();
         String itemString = String.valueOf(itemMaterial).toLowerCase(Locale.ENGLISH);
         itemComponent = miniMessage.deserialize(
-                VillagerMessage.VILLAGER_INVENTORY_ITEM_FORMAT.getMessage(),
+                Message.INSERT_VILLAGER_INVENTORY_ITEM.getMessage(),
                 Placeholder.parsed("item", itemString),
                 Placeholder.parsed("value", Integer.toString(itemCount)));
         return itemComponent;
@@ -363,7 +361,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
         outputHasInfo = true;
         Component inventoryComponent = Component.empty();
         if (getVillagerInventory().isEmpty()) {
-            inventoryComponent = miniMessage.deserialize(MessageInsert.EMPTY_MESSAGE_FORMAT.getMessage());
+            inventoryComponent = miniMessage.deserialize(Message.INSERT_NOTHING_EMPTY.getMessage());
         } else {
             List<ItemStack> invContents = Arrays.stream(getVillagerInventory().getContents()).toList();
             for (ItemStack item : invContents) {
@@ -371,7 +369,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
                 inventoryComponent = inventoryComponent.appendNewline().append(villagerInventoryItem(item));
             }
         }
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_INVENTORY.getMessage(), Placeholder.component("contents", inventoryComponent));
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_INVENTORY.getMessage(), Placeholder.component("contents", inventoryComponent));
     }
 
     /**
@@ -386,7 +384,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
     public Component getVillagerJobsiteLocationMessageComponent() {
         if (!ConfigToggle.DISPLAY_JOB_SITE_LOCATION.isEnabled() || !villHasProfession) return null;
         outputHasInfo = true;
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_JOBSITE_LOCATION.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_JOB_SITE.getMessage(),
                 Resolvers.getInstance().locationBuilder(getVillagerJobsiteLocation()));
     }
 
@@ -408,7 +406,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
     public Component getVillagerBedLocationMessageComponent() {
         if (!ConfigToggle.DISPLAY_BED_LOCATION.isEnabled()) return null;
         outputHasInfo = true;
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_BED_LOCATION.getMessage(), Resolvers.getInstance().locationBuilder(getVillagerBedLocation()));
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_BED_LOCATION.getMessage(), Resolvers.getInstance().locationBuilder(getVillagerBedLocation()));
     }
 
     /**
@@ -422,7 +420,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
      * <br>If all those methods return null, uses NO_INFORMATION_TO_DISPLAY from VillagerMessage enum
      */
     public void buildOutputComponent() {
-        Component tempOutputComponent = miniMessage.deserialize(ServerMessage.PLUGIN_PREFIX.getMessage());
+        Component tempOutputComponent = miniMessage.deserialize(Message.INSERT_PLUGIN_PREFIX.getMessage());
         if (getLobotomizedMessageComponent() != null) {
             tempOutputComponent = tempOutputComponent.appendNewline().append(getLobotomizedMessageComponent());
         }
@@ -457,7 +455,7 @@ public class VillagerOutputEvent extends Event implements Cancellable {
             tempOutputComponent = tempOutputComponent.appendNewline().append(getPlayerReputationMessageComponent());
         }
         if (!outputHasInfo) {
-            tempOutputComponent = tempOutputComponent.appendNewline().append(miniMessage.deserialize(VillagerMessage.NO_INFORMATION_TO_DISPLAY.getMessage()));
+            tempOutputComponent = tempOutputComponent.appendNewline().append(miniMessage.deserialize(Message.READOUT_NOTHING_TO_DISPLAY.getMessage()));
         }
         setOutputComponent(tempOutputComponent);
     }

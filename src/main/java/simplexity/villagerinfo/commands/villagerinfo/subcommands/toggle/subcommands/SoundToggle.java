@@ -3,8 +3,7 @@ package simplexity.villagerinfo.commands.villagerinfo.subcommands.toggle.subcomm
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import simplexity.villagerinfo.commands.util.SubCommand;
-import simplexity.villagerinfo.configurations.locale.MessageInsert;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
+import simplexity.villagerinfo.configurations.locale.Message;
 import simplexity.villagerinfo.events.PlayerToggleEvent;
 import simplexity.villagerinfo.util.PDCTag;
 import simplexity.villagerinfo.util.Perm;
@@ -14,13 +13,13 @@ import java.util.List;
 
 public class SoundToggle extends SubCommand {
     public SoundToggle() {
-        super(Perm.VILL_COMMAND_TOGGLE_SOUND.getPerm(), ServerMessage.HELP_TOGGLE_SOUND.getMessage());
+        super(Perm.VILL_COMMAND_TOGGLE_SOUND.getPerm(), Message.HELP_TOGGLE_SOUND.getMessage());
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof org.bukkit.entity.Player player)) {
-            sender.sendMessage(Resolvers.getInstance().prefixResolver(ServerMessage.NOT_A_PLAYER.getMessage()));
+            sender.sendMessage(Resolvers.getInstance().prefixResolver(Message.ERROR_MUST_BE_PLAYER.getMessage()));
             return;
         }
         PlayerToggleEvent toggleSoundEvent = callToggleSoundEvent(player);
@@ -36,7 +35,7 @@ public class SoundToggle extends SubCommand {
     }
 
     public PlayerToggleEvent callToggleSoundEvent(org.bukkit.entity.Player player) {
-        PlayerToggleEvent toggleSoundEvent = new PlayerToggleEvent(player, PDCTag.PLAYER_TOGGLE_SOUND_ENABLED.getPdcTag(), MessageInsert.TOGGLE_TYPE_SOUND.getMessage());
+        PlayerToggleEvent toggleSoundEvent = new PlayerToggleEvent(player, PDCTag.PLAYER_TOGGLE_SOUND_ENABLED.getPdcTag(), Message.INSERT_TOGGLE_SOUND.getMessage());
         Bukkit.getServer().getPluginManager().callEvent(toggleSoundEvent);
         if (toggleSoundEvent.isCancelled()) return null;
         return toggleSoundEvent;

@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import simplexity.villagerinfo.commands.util.SubCommand;
 import simplexity.villagerinfo.commands.util.SubCommandMaps;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
+import simplexity.villagerinfo.configurations.locale.Message;
 import simplexity.villagerinfo.util.Perm;
 import simplexity.villagerinfo.util.Resolvers;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class HelpCommand extends SubCommand {
     public HelpCommand() {
-        super(Perm.VILL_COMMAND_BASE.getPerm(), ServerMessage.HELP_MAIN.getMessage());
+        super(Perm.VILL_COMMAND_BASE.getPerm(), Message.HELP_MAIN.getMessage());
     }
 
     @Override

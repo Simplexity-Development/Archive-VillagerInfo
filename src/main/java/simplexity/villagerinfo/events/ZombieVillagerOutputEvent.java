@@ -14,8 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import simplexity.villagerinfo.VillagerInfo;
 import simplexity.villagerinfo.configurations.functionality.ConfigToggle;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
-import simplexity.villagerinfo.configurations.locale.VillagerMessage;
+import simplexity.villagerinfo.configurations.locale.Message;
 import simplexity.villagerinfo.util.PDCTag;
 import simplexity.villagerinfo.util.Resolvers;
 
@@ -106,7 +105,7 @@ public class ZombieVillagerOutputEvent extends Event implements Cancellable {
         outputHasInfo = true;
         Double currentHealth = getZombieVillagerCurrentHealth();
         Double maxHealth = getZombieVillagerMaxHealth();
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_HEALTH.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_HEALTH.getMessage(),
                 Placeholder.parsed("value", currentHealth.toString()),
                 Placeholder.parsed("value2", maxHealth.toString()));
     }
@@ -133,7 +132,7 @@ public class ZombieVillagerOutputEvent extends Event implements Cancellable {
         outputHasInfo = true;
         Villager.Profession profession = getZombieVillagerProfession();
         String professionString = profession.name().toLowerCase();
-        return miniMessage.deserialize(VillagerMessage.VILLAGER_PROFESSION.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_VILLAGER_PROFESSION.getMessage(),
                 Placeholder.parsed("value", professionString));
     }
 
@@ -158,10 +157,10 @@ public class ZombieVillagerOutputEvent extends Event implements Cancellable {
         if (!ConfigToggle.DISPLAY_ZOMBIE_VILLAGER_CONVERSION_TIME.isEnabled()) return null;
         outputHasInfo = true;
         if (!isConverting())
-            return miniMessage.deserialize(VillagerMessage.ZOMBIE_VILLAGER_NOT_CURRENTLY_CONVERTING.getMessage());
+            return miniMessage.deserialize(Message.READOUT_ZOMBIE_VILLAGER_NOT_CURRENTLY_CONVERTING.getMessage());
         long conversionTimeDiff = getCurrentGameTime() - getTimeUntilConverted();
         Long conversionTimeInSeconds = conversionTimeDiff / 20;
-        return miniMessage.deserialize(VillagerMessage.ZOMBIE_VILLAGER_CONVERSION_TIME.getMessage(),
+        return miniMessage.deserialize(Message.READOUT_ZOMBIE_VILLAGER_CONVERSION_TIME.getMessage(),
                 Resolvers.getInstance().timeFormatter(conversionTimeInSeconds));
     }
 
@@ -173,7 +172,7 @@ public class ZombieVillagerOutputEvent extends Event implements Cancellable {
      */
 
     public void buildOutputComponent() {
-        Component tempOutputComponent = miniMessage.deserialize(ServerMessage.PLUGIN_PREFIX.getMessage());
+        Component tempOutputComponent = miniMessage.deserialize(Message.INSERT_PLUGIN_PREFIX.getMessage());
         if (getTimeUntilConvertedMessageComponent() != null) {
             tempOutputComponent = tempOutputComponent.appendNewline().append(getTimeUntilConvertedMessageComponent());
         }
@@ -184,7 +183,7 @@ public class ZombieVillagerOutputEvent extends Event implements Cancellable {
             tempOutputComponent = tempOutputComponent.appendNewline().append(getZombieVillagerProfessionMessageComponent());
         }
         if (!outputHasInfo) {
-            tempOutputComponent = tempOutputComponent.appendNewline().append(miniMessage.deserialize(VillagerMessage.NO_INFORMATION_TO_DISPLAY.getMessage()));
+            tempOutputComponent = tempOutputComponent.appendNewline().append(miniMessage.deserialize(Message.READOUT_NOTHING_TO_DISPLAY.getMessage()));
         }
         setOutputComponent(tempOutputComponent);
     }

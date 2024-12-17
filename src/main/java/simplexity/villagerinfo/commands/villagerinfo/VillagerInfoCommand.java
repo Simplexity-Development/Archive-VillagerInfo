@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import simplexity.villagerinfo.commands.util.SubCommand;
 import simplexity.villagerinfo.commands.util.SubCommandMaps;
-import simplexity.villagerinfo.configurations.locale.ServerMessage;
+import simplexity.villagerinfo.configurations.locale.Message;
 import simplexity.villagerinfo.util.Perm;
 
 import java.util.ArrayList;
@@ -21,17 +21,17 @@ public class VillagerInfoCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendRichMessage(ServerMessage.NOT_A_PLAYER.getMessage());
+            sender.sendRichMessage(Message.ERROR_MUST_BE_PLAYER.getMessage());
             return false;
         }
         if (args.length < 1) {
-            player.sendRichMessage(ServerMessage.NOT_ENOUGH_ARGUMENTS.getMessage());
+            player.sendRichMessage(Message.ERROR_NOT_ENOUGH_ARGUMENTS.getMessage());
             return false;
         }
         String commandArg = args[0];
         HashMap<String, SubCommand> subCommands = SubCommandMaps.getInstance().getVillagerInfoSubCommands();
         if (!subCommands.containsKey(commandArg)) {
-            player.sendRichMessage(ServerMessage.SUBCOMMAND_DOES_NOT_EXIST.getMessage() + commandArg);
+            player.sendRichMessage(Message.ERROR_NO_KNOWN_SUBCOMMAND.getMessage() + commandArg);
             return false;
         }
         subCommands.get(commandArg).execute(player, args);

@@ -15,7 +15,7 @@ import simplexity.villagerinfo.commands.villagerinfo.subcommands.toggle.subcomma
 import simplexity.villagerinfo.commands.villagerinfo.subcommands.toggle.subcommands.OutputToggle;
 import simplexity.villagerinfo.commands.villagerinfo.subcommands.toggle.subcommands.SoundToggle;
 import simplexity.villagerinfo.configurations.functionality.VillConfig;
-import simplexity.villagerinfo.configurations.locale.LocaleConfig;
+import simplexity.villagerinfo.configurations.locale.LocaleHandler;
 import simplexity.villagerinfo.interaction.listeners.PlayerInteractEntityListener;
 import simplexity.villagerinfo.interaction.logic.HighlightLogic;
 
@@ -55,7 +55,7 @@ public final class VillagerInfo extends JavaPlugin {
 
     public void reloadVillInfoConfigs() {
         getInstance().saveDefaultConfig();
-        LocaleConfig.getInstance().reloadLocale();
+        LocaleHandler.getInstance().reloadLocale();
         VillConfig.getInstance().reloadVillConfig(this.getConfig());
     }
 
